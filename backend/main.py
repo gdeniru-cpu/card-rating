@@ -65,3 +65,13 @@ async def analyze_image(image_id: str) -> AnalyzeImageResponse:
         features=features,
         recommendations=recommendations,
     )
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

@@ -1,10 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Product Card AI</title>
+  <meta charset="UTF-8">
+  <title>Product Card AI MVP</title>
 </head>
+
 <body>
-    <h1>Product Card AI MVP</h1>
-    <p>System for e-commerce product card optimization.</p>
+  <h1>Product Card AI</h1>
+
+  <input type="file" id="fileInput" />
+  <button onclick="uploadImage()">Upload + Analyze</button>
+
+  <h2>Result:</h2>
+  <pre id="output"></pre>
+
+<script>
+const API_URL = "http://127.0.0.1:8000";
+
+async function uploadImage() {
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Select image first");
+        return;
+    }
+
+    // 1. upload image
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const uploadRes = await fetch(`${API_URL}/upload-image`, {
+        method: "POST",
+        body: formData
+    });
+
+    const uploadData = await uploadRes.json();
+    const imageId = uploadData.image_id;
+
+    // 2. analyze image
+    const analyzeRes = await fetch(`${API_URL}/analyze-image/${imageId}`, {
+        method: "POST"
+    });
+
+    const result = await analyzeRes.json();
+
+    document.getElementById("output").textContent =
+        JSON.stringify(result, null, 2);
+}
+</script>
+
 </body>
 </html>
