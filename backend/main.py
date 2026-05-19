@@ -1,7 +1,9 @@
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from uuid import uuid4
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+
 
 from backend.models.schemas import AnalyzeImageResponse, UploadImageResponse
 from backend.services.feature_extractor import extract_features
@@ -13,7 +15,13 @@ app = FastAPI(
     description="Analyze e-commerce product cards with mock SUM saliency and LLM recommendations.",
     version="0.1.0",
 )
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -65,13 +73,3 @@ async def analyze_image(image_id: str) -> AnalyzeImageResponse:
         features=features,
         recommendations=recommendations,
     )
-
-from fastapi.middleware.cors import CORSMiddleware
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
